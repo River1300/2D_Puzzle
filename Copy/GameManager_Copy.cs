@@ -6,8 +6,10 @@ public class GameManager_Copy : MonoBehaviour
 {
     public Dongle lastDongle;
     public GameObject donglePrefab;
-
     public Transform dongleGroup;
+    public GameObject effectPrefab;
+    public Transform effectGroup;
+
 
     public int maxLevel;
 
@@ -23,9 +25,12 @@ public class GameManager_Copy : MonoBehaviour
 
     Dongle GetDongle()
     {
+        GameObject instantE = Instantiate(effectPrefab, effectGroup);
+        ParticleSystem tempE = instantE.GetComponent<ParticleSystem>();
+
         GameObject instant = Instantiate(donglePrefab, dongleGroup);
         Dongle tempDongle = instant.GetComponent<Dongle>();
-
+        //tempE.effect = this;
         return tempDongle;
     }
 

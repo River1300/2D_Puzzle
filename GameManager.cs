@@ -6,8 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public Dongle lastdongle;
     public GameObject donglePrefab;
-
     public Transform dongleGroup;
+    public GameObject effectPrefab;
+    public Transform effectGroup;
 
     public int maxLevel;
 
@@ -23,8 +24,12 @@ public class GameManager : MonoBehaviour
 
     Dongle GetDongle()
     {
+        GameObject instantE = Instantiate(effectPrefab, effectGroup);
+        ParticleSystem instantEffect = instantE.GetComponent<ParticleSystem>();
+
         GameObject instant = Instantiate(donglePrefab, dongleGroup);
         Dongle instantDongle = instant.GetComponent<Dongle>();
+        instantDongle.effect = instantEffect;
         return instantDongle;   // 2.#2[b]
     }
 
