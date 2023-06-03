@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public Transform dongleGroup;
 
+    public int maxLevel;
+
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -31,7 +33,9 @@ public class GameManager : MonoBehaviour
         Dongle newDongle = GetDongle();
         lastdongle = newDongle; // 2.#2[a]
 
-        lastdongle.level = Random.Range(0, 8);
+        lastdongle.manager = this;
+
+        lastdongle.level = Random.Range(0, maxLevel);
         lastdongle.gameObject.SetActive(true);  // 2.#4[g]
 
         StartCoroutine(WaitNext());
