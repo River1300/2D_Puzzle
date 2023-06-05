@@ -10,7 +10,9 @@ public class GameManager : MonoBehaviour
     public GameObject effectPrefab;
     public Transform effectGroup;
 
+    public int score;
     public int maxLevel;
+    public bool isOver;
 
     void Awake()
     {
@@ -35,6 +37,9 @@ public class GameManager : MonoBehaviour
 
     void NextDongle()
     {
+        if(isOver)
+            return;
+
         Dongle newDongle = GetDongle();
         lastdongle = newDongle; // 2.#2[a]
 
@@ -72,5 +77,30 @@ public class GameManager : MonoBehaviour
 
         lastdongle.Drop();
         lastdongle = null;
+    }
+
+    public void GameOver()
+    {
+        if(isOver)
+            return;
+        isOver = true;
+
+        StartCoroutine(GameOverRoutine());
+    }
+
+    IEnumerator GameOverRoutine()
+    {
+        Dongle[] dongles = FindObjectsOfType<Dongle>();
+
+        for(int i = 0; i < dongles.Length; i++)
+        {
+            dongles[i].rigid.simulated = false;
+        }
+
+        for(int i = 0; i < dongles.Length; i++)
+        {
+            dongles[i].Hide(Vector3.up * 100);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }
