@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class GameManager_Copy : MonoBehaviour
 {
-    public Dongle lastDongle;
     public GameObject donglePrefab;
     public Transform dongleGroup;
+    public List<Dongle> donglePool;
     public GameObject effectPrefab;
     public Transform effectGroup;
+    public List<ParticleSystem> effectPool;
+    [Range(1, 30)]
+    public int poolSize;
+    public int poolCursor;
+    public Dongle lastDongle;
 
     public AudioSource bgmPlayer;
     public AudioSource[] sfxPlayer;
@@ -23,6 +28,14 @@ public class GameManager_Copy : MonoBehaviour
     void Awake()
     {
         Application.targetFrameRate = 60;
+
+        donglePool = new List<Dongle>();
+        effectPool = new List<ParticleSystem>();
+
+        for(int i = 0; i < poolSize; i++)
+        {
+            MakeDongle();
+        }
     }
 
     void Start()
@@ -31,15 +44,34 @@ public class GameManager_Copy : MonoBehaviour
         NextDongle();
     }
 
-    Dongle GetDongle()
+    Dongle MakeDongle()
     {
         GameObject instantE = Instantiate(effectPrefab, effectGroup);
+        instantE.name = "Effect " + effectPool.Count;
         ParticleSystem tempE = instantE.GetComponent<ParticleSystem>();
+        effectPool.Add(tempE);
 
         GameObject instant = Instantiate(donglePrefab, dongleGroup);
+        instant.name = "Dongle " + donglePool.Count;
         Dongle tempDongle = instant.GetComponent<Dongle>();
-        //tempE.effect = this;
+        //tempDongle.manager = this;
+        tempDongle.effect = tempE;
+        donglePool.Add(tempDongle);
         return tempDongle;
+    }
+
+    Dongle GetDongle()
+    {
+        for(int i = 0; i < poolSize; i++)
+        {
+            poolCursor = (poolCursor + 1) % donglePool.Count;
+
+            if(!donglePool[poolCursor].gameObject.activeSelf)
+            {
+                return donglePool[poolCursor];
+            }
+        }
+        return MakeDongle();
     }
 
     void NextDongle()
@@ -47,10 +79,7 @@ public class GameManager_Copy : MonoBehaviour
         if(isOver)
             return;
 
-        Dongle newDongle = GetDongle();
-        lastDongle = newDongle;
-
-        // lastDongle.manager = this;
+        lastDongle = GetDongle();
 
         lastDongle.level = Random.Range(0, maxLevel);
         lastDongle.gameObject.SetActive(true);

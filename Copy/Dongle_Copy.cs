@@ -32,6 +32,23 @@ public class Dongle_Copy : MonoBehaviour
         anim.SetInteger("Level", level);
     }
 
+    void OnDisable()
+    {
+        level = 0;
+        isDrag = false;
+        isMerge = false;
+        isAttach = false;
+
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        transform.localScale = Vector3.zero;
+
+        rigid.velocity = Vector2.zero;
+        rigid.angularVelocity = 0;
+        rigid.simulated = false;
+        circle.enabled = true;
+    }
+
     void Update()
     {
         if(isDrag)
